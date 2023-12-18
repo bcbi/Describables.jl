@@ -95,6 +95,12 @@ end
         my_test_closure_1_C()
         my_test_closure_4()
         my_test_closure_INeverGetDescribed()
+
+        @testset "code coverage" begin
+            @testset "get_description" begin
+                @test Describables.get_description(obj1) == "obj1 has a new description"
+            end
+        end
     end
 end
 
