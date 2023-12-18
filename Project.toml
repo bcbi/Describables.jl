@@ -1,0 +1,4 @@
+name = "Describables"
+uuid = "a5fa1b7c-2817-4d7f-b86b-3a908f100d0e"
+authors = ["Dilum Aluthge", "Brown Center for Biomedical Informatics (BCBI)", "contributors"]
+version = "1.0.0-DEV"
