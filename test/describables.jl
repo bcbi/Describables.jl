@@ -1,13 +1,11 @@
 using Describables: Describables, @describable, show_describable
 
 # Workflow #1: `@describable struct Foo ... end`
-# @describable struct Foo # TODO: uncomment this line
-struct Foo # TODO: delete this line
+@describable struct Foo
     x::Float64
     y::AbstractString
     z::Any
 end
-@describable Foo # TODO: delete this line
 
 # Workflow #2: `@describable Bar`
 struct Bar
