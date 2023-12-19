@@ -3,6 +3,7 @@ module Describables
 export get_description
 export set_description!
 export @describable
+export show_describable
 
 ### Lockables
 
