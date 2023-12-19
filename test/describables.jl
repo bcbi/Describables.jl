@@ -1,13 +1,11 @@
 using Describables: Describables, @describable, show_describable
 
 # Workflow #1: `@describable struct Foo ... end`
-# @describable struct Foo # TODO: uncomment this line
-struct Foo # TODO: delete this line
+@describable struct Foo
     x::Float64
     y::AbstractString
     z::Any
 end
-@describable Foo # TODO: delete this line
 
 # Workflow #2: `@describable Bar`
 struct Bar
@@ -140,6 +138,13 @@ end
                 @test Describables.get_description(obj1) == "obj1 has a new description"
             end
         end
+    end
+end
+
+@testset "more code coverage" begin
+    @testset "the @describable macro" begin
+        expected_msg = "Argument must be either a struct definition or a symbol"
+        @test_throws ArgumentError(expected_msg) Describables._describable_macro(:(1 + 1))
     end
 end
 

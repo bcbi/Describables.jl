@@ -85,17 +85,31 @@ function show_describable(cache, io::IO, mime, obj::T) where {T}
     return nothing
 end
 
-function _describable_macro(T::Symbol)
+function _base_show_method_expr(Tname::Symbol)
     result = quote
-        function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(T)))
+        function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
             Describables.show_describable(io, mime, obj)
             return nothing
         end
     end
     return result
 end
+_describable_macro(Tname::Symbol) = _base_show_method_expr(Tname)
+function _describable_macro(original_ex::Expr)
+    if original_ex.head != :struct
+        msg = "Argument must be either a struct definition or a symbol"
+        throw(ArgumentError(msg))
+    end
+    struct_name = original_ex.args[2]::Symbol
+    show_method_expr = _base_show_method_expr(struct_name)
+    result = quote
+        $(original_ex)
+        $(show_method_expr)
+    end
+    return result
+end
 
-macro describable(ex::Symbol)
+macro describable(ex::Union{Expr, Symbol})
     return _describable_macro(ex)
 end
 
