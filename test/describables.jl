@@ -141,5 +141,12 @@ end
     end
 end
 
+@testset "more code coverage" begin
+    @testset "the @describable macro" begin
+        expected_msg = "Argument must be either a struct definition or a symbol"
+        @test_throws ArgumentError(expected_msg) Describables._describable_macro(:(1 + 1))
+    end
+end
+
 # @testset "type stability" begin
 # end
