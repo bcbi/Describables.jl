@@ -52,12 +52,20 @@ function get_description(cache::LockedDescriptionCache, obj::Any)
     return descr
 end
 
-set_description!(obj::Any, new_descr::AbstractString) = set_description!(get_default_cache(), obj, new_descr)
-function set_description!(cache::LockedDescriptionCache, obj::Any, new_descr::AbstractString)
+const _default_override = true
+
+set_description!(obj::Any, new_descr::AbstractString; overwrite::Bool = _default_override) = set_description!(get_default_cache(), obj, new_descr)
+function set_description!(cache::LockedDescriptionCache, obj::Any, new_descr::AbstractString; overwrite::Bool = _default_override)
     new_descr_clean = convert(String, strip(new_descr))::String
     if !isempty(new_descr_clean)
-        mylock(cache.l) do dict
-            dict[obj] = new_descr_clean
+        if overwrite
+            mylock(cache.l) do dict
+                dict[obj] = new_descr_clean
+            end
+        else
+            mylock(cache.l) do dict
+                get!(dict, obj, new_descr_clean)
+            end
         end
     end
     return nothing
