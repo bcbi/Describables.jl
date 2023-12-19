@@ -81,7 +81,7 @@ julia> struct Hello
            y
        end
 
-julia> Base.show(io::IO, mime::Base.MIME"text/plain", obj::Hello) = show_describable(io, mime, obj)
+julia> Base.show(io::IO, mime::MIME"text/plain", obj::Hello) = show_describable(io, mime, obj)
 
 julia> Hello(1, 2)
 Hello(1, 2, #=  =#)
