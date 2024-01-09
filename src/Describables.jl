@@ -63,10 +63,8 @@ function set_description!(cache::LockedDescriptionCache, obj::Any, new_descr::Ab
     return nothing
 end
 
-# TODO: narrow the type restriction on `mime`:
-show_describable(io::IO, mime, obj::T) where {T} = show_describable(get_default_cache(), io, mime, obj)
-# TODO: narrow the type restriction on `mime`:
-function show_describable(cache, io::IO, mime, obj::T) where {T}
+show_describable(io::IO, mime::Base.MIME"text/plain", obj::T) where {T} = show_describable(get_default_cache(), io, mime, obj)
+function show_describable(cache, io::IO, mime::Base.MIME"text/plain", obj::T) where {T}
     print(io, T)
     print(io, "(")
     for field in fieldnames(T)
