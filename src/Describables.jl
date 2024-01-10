@@ -155,6 +155,11 @@ function _base_show_method_expr(Tname::Symbol)
         # > requested mime type, as written by show(io, mime, x) (throwing a MethodError if no
         # > appropriate show is available).
         # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/multimedia.jl#L125-L158
+
+        # Do we also need to define `Base.display`?. No. The Julia manual says:
+        # > The display functions ultimately call show in order to write an object x as a given
+        # mime type to a given I/O stream io (usually a memory buffer), if possible.
+        # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/multimedia.jl#L79-L121
     end
     return result
 end
