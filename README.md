@@ -76,20 +76,20 @@ Baz(1, 2, #= my description =#)
 ```julia
 julia> using Describables: Describables, show_describable, set_description!
 
-julia> struct Hello
+julia> struct World
            x::Int
            y::Int
        end
 
-julia> Base.show(io::IO, mime::MIME"text/plain", obj::Hello) = show_describable(io, mime, obj)
+julia> Base.show(io::IO, mime::MIME"text/plain", obj::World) = show_describable(io, mime, obj)
 
-julia> Hello(1, 2)
-Hello(1, 2, #=  =#)
+julia> World(1, 2)
+World(1, 2, #=  =#)
 
-julia> set_description!(Hello(1, 2), "my description")
+julia> set_description!(World(1, 2), "my description")
 
-julia> Hello(1, 2)
+julia> World(1, 2)
 
-julia> Hello(1, 2)
-Hello(1, 2, #= my description =#)
+julia> World(1, 2)
+World(1, 2, #= my description =#)
 ```
