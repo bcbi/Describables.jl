@@ -52,8 +52,11 @@ function get_description(cache::LockedDescriptionCache, obj::Any)
     return descr
 end
 
-set_description!(obj::Any, new_descr::AbstractString) =
-    set_description!(get_default_cache(), obj, new_descr)
+function set_description!(obj::Any, new_descr::AbstractString)
+    cache = get_default_cache()
+    set_description!(cache, obj, new_descr)
+    return nothing
+end
 function set_description!(
     cache::LockedDescriptionCache,
     obj::Any,
