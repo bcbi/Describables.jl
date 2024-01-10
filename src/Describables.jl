@@ -134,6 +134,7 @@ function _base_show_method_expr(Tname::Symbol)
         # > The default MIME type is MIME"text/plain". There is a fallback definition
         # > for text/plain output that calls show with 2 arguments, so it is not always
         # > necessary to add a method for that case.
+        # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/multimedia.jl#L79-L121
         #
         # function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
         #     Describables.show_describable(io, mime, obj)
