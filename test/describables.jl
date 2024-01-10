@@ -27,6 +27,10 @@ struct Baz
     y::AbstractString
     z::Any
 end
+# Two-argument `Base.show` method:
+Base.show(io::Base.IO, obj::Baz) = show_describable(io, Base.MIME"text/plain"(), obj)
+# TODO: do we actually need to define the three-arg show method?
+# Three-argument `Base.show` method:
 Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::Baz) = show_describable(io, mime, obj)
 
 # And this struct is never made describable
@@ -65,7 +69,7 @@ end
 
             do_tests = (expected_str::AbstractString, obj) -> begin
                 _do_test_3arg(expected_str, obj) # three args: io, mime, obj
-                # _do_test_2arg(expected_str, obj) # two args: io, obj
+                _do_test_2arg(expected_str, obj) # two args: io, obj
                 _do_test_repr(expected_str, obj)
             end
 
