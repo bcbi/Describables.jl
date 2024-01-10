@@ -89,9 +89,23 @@ function _base_show_method_expr(Tname::Symbol)
             Describables.show_describable(io, mime, obj)
             return nothing
         end
+        # Do we also need to define `Base.print`? No. The Julia manual says:
+        # > print falls back to calling show, so most types should just define show.
+        # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/strings/io.jl#L5-L31
+        #
+        # Do we also need to define `Base.repr`? No. If I understand correctly,
+        # if we don't define any methods of `Base.repr`, then `Base.repr` will
+        # automatically fall back to calling the three-argument `Base.show(io, mime, obj)`
+        # method that we defined above.
+        # The Julia manual says the following about the `Base.repr(mime, x; context=nothing)` method:
+        # > Return an AbstractString or Vector{UInt8} containing the representation of x in the
+        # > requested mime type, as written by show(io, mime, x) (throwing a MethodError if no
+        # > appropriate show is available).
+        # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/multimedia.jl#L125-L158
     end
     return result
 end
+
 _describable_macro(Tname::Symbol) = _base_show_method_expr(Tname)
 function _describable_macro(original_ex::Expr)
     if original_ex.head != :struct
@@ -106,7 +120,6 @@ function _describable_macro(original_ex::Expr)
     end
     return result
 end
-
 macro describable(ex::Union{Expr, Symbol})
     return _describable_macro(ex)
 end
