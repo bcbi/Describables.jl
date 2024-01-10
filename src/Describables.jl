@@ -126,6 +126,18 @@ function _base_show_method_expr(Tname::Symbol)
         # > New types T should overload show(io::IO, x::T).
         # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/show.jl#L430-L456
         function Base.show(io::Base.IO, obj::$(esc(Tname)))
+            # The user (i.e. the person that is calling the `@describable` macro)
+            # needs to have brought the `Describable` name into scope. So they
+            # need to have done `import Describable` or something similar.
+            #
+            # It's not sufficient to only do `using Describable: @describable`,
+            # because this doesn't bring the `Describable` name into scope. So you
+            # need to do either `using Describable: Describable, @describable` or
+            # `import Describable; using Describable: @describable` or something
+            # along those lines.
+            #
+            # Note: please do not do `using Describable`.
+            # See https://github.com/JuliaLang/julia/pull/42080 for more details.
             Describables.show_describable(io, obj)
             return nothing
         end
@@ -140,7 +152,6 @@ function _base_show_method_expr(Tname::Symbol)
         # > for text/plain output that calls show with 2 arguments, so it is not always
         # > necessary to add a method for that case.
         # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/multimedia.jl#L79-L121
-        #
         # function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
         #     Describables.show_describable(io, mime, obj)
         #     return nothing
