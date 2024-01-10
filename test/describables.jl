@@ -41,33 +41,37 @@ end
         @testset for mimetype in [Base.MIME"text/plain"]
             mime = mimetype()
 
-            _do_test_3arg = (expected_str::AbstractString, obj) -> begin
-                io = IOBuffer()
-                Base.show(io, mime, obj) # three args: io, mime, obj
-                actual_str = String(take!(io))
-                @test actual_str == expected_str
-            end
+            _do_test_3arg =
+                (expected_str::AbstractString, obj) -> begin
+                    io = IOBuffer()
+                    Base.show(io, mime, obj) # three args: io, mime, obj
+                    actual_str = String(take!(io))
+                    @test actual_str == expected_str
+                end
 
-            _do_test_2arg = (expected_str::AbstractString, obj) -> begin
-                io = IOBuffer()
-                Base.show(io, obj) # two args: io, obj
-                actual_str = String(take!(io))
-                @test actual_str == expected_str
-            end
+            _do_test_2arg =
+                (expected_str::AbstractString, obj) -> begin
+                    io = IOBuffer()
+                    Base.show(io, obj) # two args: io, obj
+                    actual_str = String(take!(io))
+                    @test actual_str == expected_str
+                end
 
-            _do_test_repr = (expected_str::AbstractString, obj) -> begin
-                # With MIME:
-                @test repr(mime, obj) == expected_str
+            _do_test_repr =
+                (expected_str::AbstractString, obj) -> begin
+                    # With MIME:
+                    @test repr(mime, obj) == expected_str
 
-                # Without MIME:
-                # @test repr(obj) == expected_str # TODO: uncomment this line
-            end
+                    # Without MIME:
+                    # @test repr(obj) == expected_str # TODO: uncomment this line
+                end
 
-            do_tests = (expected_str::AbstractString, obj) -> begin
-                _do_test_3arg(expected_str, obj) # three args: io, mime, obj
-                _do_test_2arg(expected_str, obj) # two args: io, obj
-                _do_test_repr(expected_str, obj)
-            end
+            do_tests =
+                (expected_str::AbstractString, obj) -> begin
+                    _do_test_3arg(expected_str, obj) # three args: io, mime, obj
+                    _do_test_2arg(expected_str, obj) # two args: io, obj
+                    _do_test_repr(expected_str, obj)
+                end
 
             obj1 = T(1.0, "two", 3)
             obj4 = T(4.0, "five", 6)
@@ -79,33 +83,37 @@ end
                 expected_str = "$(T)(1.0, \"two\", 3, #=  =#)"
                 do_tests(expected_str, obj1)
             end
-            my_test_closure_1_B = () -> begin
-                expected_str = "$(T)(1.0, \"two\", 3, #= this is my description for obj1 =#)"
-                do_tests(expected_str, obj1)
-            end
-            my_test_closure_1_C = () -> begin
-                expected_str = "$(T)(1.0, \"two\", 3, #= obj1 has a new description =#)"
-                do_tests(expected_str, obj1)
-            end
+            my_test_closure_1_B =
+                () -> begin
+                    expected_str = "$(T)(1.0, \"two\", 3, #= this is my description for obj1 =#)"
+                    do_tests(expected_str, obj1)
+                end
+            my_test_closure_1_C =
+                () -> begin
+                    expected_str = "$(T)(1.0, \"two\", 3, #= obj1 has a new description =#)"
+                    do_tests(expected_str, obj1)
+                end
 
             my_test_closure_4_A = () -> begin
                 expected_str = "$(T)(4.0, \"five\", 6, #=  =#)"
                 do_tests(expected_str, obj4)
             end
-            my_test_closure_4_B = () -> begin
-                expected_str = "$(T)(4.0, \"five\", 6, #= we give obj4 a different description =#)"
-                do_tests(expected_str, obj4)
-            end
+            my_test_closure_4_B =
+                () -> begin
+                    expected_str = "$(T)(4.0, \"five\", 6, #= we give obj4 a different description =#)"
+                    do_tests(expected_str, obj4)
+                end
 
             my_test_closure_7 = () -> begin
                 expected_str = "$(T)(7.0, \"eight\", 9, #=  =#)"
                 do_tests(expected_str, obj7)
             end
 
-            my_test_closure_IAmNotDescribable = () -> begin
-                expected_str = "IAmNotDescribable(10.0, \"eleven\", 12)"
-                do_tests(expected_str, obj_IAmNotDescribable)
-            end
+            my_test_closure_IAmNotDescribable =
+                () -> begin
+                    expected_str = "IAmNotDescribable(10.0, \"eleven\", 12)"
+                    do_tests(expected_str, obj_IAmNotDescribable)
+                end
 
             my_test_closure_1_A()
             my_test_closure_4_A()

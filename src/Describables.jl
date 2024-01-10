@@ -14,13 +14,13 @@ export show_describable
 else
     const _ABSTRACT_LOCK_TYPE = Any
 end
-struct Lockable{T, L <: _ABSTRACT_LOCK_TYPE}
+struct Lockable{T,L<:_ABSTRACT_LOCK_TYPE}
     value::T
     lock::L
 end
 Lockable(value) = Lockable(value, Base.ReentrantLock())
 
-function mylock(f::F, l::Lockable{T, L}) where {F, T, L}
+function mylock(f::F, l::Lockable{T,L}) where {F,T,L}
     Base.lock(l.lock::L) do
         f(l.value::T)
     end
@@ -29,9 +29,9 @@ end
 ### Describables
 
 struct LockedDescriptionCache
-    l::Lockable{Dict{Any, String}, Base.ReentrantLock}
+    l::Lockable{Dict{Any,String},Base.ReentrantLock}
 end
-LockedDescriptionCache() = LockedDescriptionCache(Lockable(Dict{Any, String}()))
+LockedDescriptionCache() = LockedDescriptionCache(Lockable(Dict{Any,String}()))
 
 const DEFAULT_CACHE = Ref{LockedDescriptionCache}()
 
@@ -52,8 +52,13 @@ function get_description(cache::LockedDescriptionCache, obj::Any)
     return descr
 end
 
-set_description!(obj::Any, new_descr::AbstractString) = set_description!(get_default_cache(), obj, new_descr)
-function set_description!(cache::LockedDescriptionCache, obj::Any, new_descr::AbstractString)
+set_description!(obj::Any, new_descr::AbstractString) =
+    set_description!(get_default_cache(), obj, new_descr)
+function set_description!(
+    cache::LockedDescriptionCache,
+    obj::Any,
+    new_descr::AbstractString,
+)
     new_descr_clean = convert(String, strip(new_descr))::String
     if !isempty(new_descr_clean)
         mylock(cache.l) do dict
@@ -90,11 +95,11 @@ end
 # end
 
 function show_describable_from_cache(
-        cache::LockedDescriptionCache,
-        io::IO,
-        mime::Base.MIME"text/plain",
-        obj::T,
-    ) where {T}
+    cache::LockedDescriptionCache,
+    io::IO,
+    mime::Base.MIME"text/plain",
+    obj::T,
+) where {T}
     print(io, T)
     print(io, "(")
     for field in fieldnames(T)
@@ -178,7 +183,7 @@ function _describable_macro(original_ex::Expr)
     end
     return result
 end
-macro describable(ex::Union{Expr, Symbol})
+macro describable(ex::Union{Expr,Symbol})
     return _describable_macro(ex)
 end
 
