@@ -63,8 +63,38 @@ function set_description!(cache::LockedDescriptionCache, obj::Any, new_descr::Ab
     return nothing
 end
 
-show_describable(io::IO, mime::Base.MIME"text/plain", obj::T) where {T} = show_describable(get_default_cache(), io, mime, obj)
-function show_describable(cache, io::IO, mime::Base.MIME"text/plain", obj::T) where {T}
+# Two-argument method, analogous to the two-argument `Base.show`:
+function show_describable(io::IO, obj::T) where {T}
+    mime = Base.MIME"text/plain"()
+    show_describable(io, mime, obj)
+    return nothing
+end
+
+# Three-argument method, analogous to the three-argument `Base.show`:
+function show_describable(io::IO, mime::Base.MIME"text/plain", obj::T) where {T}
+    cache = get_default_cache()
+    show_describable_from_cache(cache, io, mime, obj)
+    return nothing
+end
+
+# function show_describable_from_cache(
+#         cache::LockedDescriptionCache,
+#         io::IO,
+#         obj::T,
+#     ) where {T}
+#     msg = """
+#         This method is not implemented. You need to manually specify
+#         a value for all four arguments, including the `mime` argument.
+#     """
+#     error(msg)
+# end
+
+function show_describable_from_cache(
+        cache::LockedDescriptionCache,
+        io::IO,
+        mime::Base.MIME"text/plain",
+        obj::T,
+    ) where {T}
     print(io, T)
     print(io, "(")
     for field in fieldnames(T)
@@ -85,14 +115,27 @@ end
 
 function _base_show_method_expr(Tname::Symbol)
     result = quote
+        # Two-argument `Base.show` method.
+        # The Julia manual says:
+        # > Write a text representation of a value x to the output stream io.
+        # > New types T should overload show(io::IO, x::T).
+        # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/show.jl#L430-L456
+        function Base.show(io::Base.IO, obj::$(esc(Tname)))
+            Describables.show_describable(io, obj)
+            return nothing
+        end
+
+        # TODO: do we actually need to define the three-arg show method?
+        # Three-argument `Base.show` method.
         function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
             Describables.show_describable(io, mime, obj)
             return nothing
         end
+
         # Do we also need to define `Base.print`? No. The Julia manual says:
         # > print falls back to calling show, so most types should just define show.
         # Source: https://github.com/JuliaLang/julia/blob/3120989f39bb7ef7863c4aab8ab1227cf71eec66/base/strings/io.jl#L5-L31
-        #
+
         # Do we also need to define `Base.repr`? No. If I understand correctly,
         # if we don't define any methods of `Base.repr`, then `Base.repr` will
         # automatically fall back to calling the three-argument `Base.show(io, mime, obj)`
