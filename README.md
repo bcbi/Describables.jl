@@ -19,8 +19,8 @@ julia> Pkg.add(url = "https://github.com/bcbi/Describables.jl")
 julia> using Describables: Describables, @describable, set_description!
 
 julia> @describable struct Foo
-           x
-           y
+           x::Int
+           y::Int
        end
 
 julia> Foo(1, 2)
@@ -38,8 +38,8 @@ Foo(1, 2, #= my description =#)
 julia> using Describables: Describables, @describable, set_description!
 
 julia> struct Bar
-           x
-           y
+           x::Int
+           y::Int
        end
 
 julia> @describable Bar
@@ -55,8 +55,8 @@ Bar(1, 2, #= my description =#)
 
 ```julia
 julia> Base.@kwdef struct Baz
-           x
-           y
+           x::Int
+           y::Int
        end
 Baz
 
@@ -77,8 +77,8 @@ Baz(1, 2, #= my description =#)
 julia> using Describables: Describables, show_describable, set_description!
 
 julia> struct Hello
-           x
-           y
+           x::Int
+           y::Int
        end
 
 julia> Base.show(io::IO, mime::MIME"text/plain", obj::Hello) = show_describable(io, mime, obj)
