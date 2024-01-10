@@ -125,12 +125,20 @@ function _base_show_method_expr(Tname::Symbol)
             return nothing
         end
 
-        # TODO: do we actually need to define the three-arg show method?
-        # Three-argument `Base.show` method.
-        function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
-            Describables.show_describable(io, mime, obj)
-            return nothing
-        end
+        # Do we also need to define a three-argument `Base.show` method, i.e.
+        # `Base.show(io, mime, obj::T)`? No. If I understand correctly,
+        # if we don't define the three-argument `Base.show` method, then calling
+        # the three-argument `Base.show` will automatically fall back to calling
+        # the two-argument `Base.show` method that we defined above.
+        # As supporting evidence, the Julia manual says:
+        # > The default MIME type is MIME"text/plain". There is a fallback definition
+        # > for text/plain output that calls show with 2 arguments, so it is not always
+        # > necessary to add a method for that case.
+        #
+        # function Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::$(esc(Tname)))
+        #     Describables.show_describable(io, mime, obj)
+        #     return nothing
+        # end
 
         # Do we also need to define `Base.print`? No. The Julia manual says:
         # > print falls back to calling show, so most types should just define show.
@@ -139,7 +147,8 @@ function _base_show_method_expr(Tname::Symbol)
         # Do we also need to define `Base.repr`? No. If I understand correctly,
         # if we don't define any methods of `Base.repr`, then `Base.repr` will
         # automatically fall back to calling the three-argument `Base.show(io, mime, obj)`
-        # method that we defined above.
+        # method, which in turn will automatically fall back to calling the
+        # two-argument `Base.show(io, obj)`, as described in the comment above.
         # The Julia manual says the following about the `Base.repr(mime, x; context=nothing)` method:
         # > Return an AbstractString or Vector{UInt8} containing the representation of x in the
         # > requested mime type, as written by show(io, mime, x) (throwing a MethodError if no
