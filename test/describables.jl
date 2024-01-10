@@ -27,11 +27,7 @@ struct Baz
     y::AbstractString
     z::Any
 end
-# Two-argument `Base.show` method:
-Base.show(io::Base.IO, obj::Baz) = show_describable(io, Base.MIME"text/plain"(), obj)
-# TODO: do we actually need to define the three-arg show method?
-# Three-argument `Base.show` method:
-Base.show(io::Base.IO, mime::Base.MIME"text/plain", obj::Baz) = show_describable(io, mime, obj)
+Base.show(io::Base.IO, obj::Baz) = show_describable(io, obj)
 
 # And this struct is never made describable
 struct IAmNotDescribable
