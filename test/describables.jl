@@ -55,9 +55,18 @@ end
                 @test actual_str == expected_str
             end
 
+            _do_test_repr = (expected_str::AbstractString, obj) -> begin
+                # With MIME:
+                @test repr(mime, obj) == expected_str
+
+                # Without MIME:
+                # @test repr(obj) == expected_str # TODO: uncomment this line
+            end
+
             do_tests = (expected_str::AbstractString, obj) -> begin
                 _do_test_3arg(expected_str, obj) # three args: io, mime, obj
                 # _do_test_2arg(expected_str, obj) # two args: io, obj
+                _do_test_repr(expected_str, obj)
             end
 
             obj1 = T(1.0, "two", 3)
