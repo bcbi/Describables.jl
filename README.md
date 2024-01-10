@@ -53,6 +53,10 @@ julia> Bar(1, 2)
 Bar(1, 2, #= my description =#)
 ```
 
+This form can be useful if you already need to use another
+macro in your struct definition, as seen in the following
+example:
+
 ```julia
 julia> Base.@kwdef struct Baz
            x::Int
